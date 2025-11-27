@@ -2,9 +2,13 @@ package com.example.azimbalife.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,10 +32,21 @@ public class ProfileActivity extends AppCompatActivity {
 
     String username; // Logged-in user's username
 
+    private static final int EDIT_PROFILE_REQUEST_CODE = 101;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.lavender));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
 
         profileImg = findViewById(R.id.profileImg);
 
@@ -54,6 +69,14 @@ public class ProfileActivity extends AppCompatActivity {
         loadUserData(username);
 
         editProfile.setOnClickListener(view -> passUserData());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == RESULT_OK) {
+            loadUserData(username); // Reload updated profile data immediately after editing
+        }
     }
 
     private void loadUserData(String username) {
@@ -124,7 +147,7 @@ public class ProfileActivity extends AppCompatActivity {
                         intent.putExtra("username", usernameFromDB);
                         intent.putExtra("password", passwordFromDB);
                         intent.putExtra("imageUrl", imageUrl);  // Pass image URL too
-                        startActivity(intent);
+                        startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE);  // Use startActivityForResult here
                         break;
                     }
                 } else {

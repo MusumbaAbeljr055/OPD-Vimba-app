@@ -5,29 +5,27 @@
     android:id="@+id/parentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pagebkg"
+    android:background="@drawable/gradient_background"
     tools:context=".Activity.AllDoctorsActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/blue"
-        android:title="See Our Available Doctors"
-        android:titleTextColor="@android:color/black"
-        app:navigationIcon="@drawable/back_white"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/purple_700"
+        android:title="Available Doctors"
+        android:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_back"
         app:titleCentered="true"
         app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
-
-    <!-- Main Content Area -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:padding="8dp">
 
-        <!-- ProgressBar -->
         <ProgressBar
             android:id="@+id/progressBarAll"
             android:layout_width="wrap_content"
@@ -36,12 +34,12 @@
             android:visibility="gone"
             android:layout_marginTop="16dp" />
 
-        <!-- RecyclerView for Doctors (Vertical, Scrollable) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/allDoctorRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
+            android:padding="4dp"
+            android:clipToPadding="false"
             android:scrollbars="vertical" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

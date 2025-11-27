@@ -1,43 +1,55 @@
 package com.example.azimbalife.Activity;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.azimbalife.Adapter.DateAdapter;
 import com.example.azimbalife.Adapter.TimeAdapter;
-import com.example.azimbalife.Domain.AppointmentModel;
 import com.example.azimbalife.Domain.DoctorsModel;
 import com.example.azimbalife.R;
-import com.example.azimbalife.Activity.NotificationUtils;
 import com.example.azimbalife.databinding.ActivityDetailBinding;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Credentials;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.util.Map;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -46,11 +58,13 @@ public class DetailActivity extends AppCompatActivity {
     private String selectedDate = null;
     private String selectedTime = null;
 
-    private String userName = "Patient Name";
-    private String currentAppointmentId = null;
-
+    private String userName = "Patient"; // Default patient name if fetch fails
+    private String userEmail = null;     // Added to store patient email
     private boolean isFavorite = false;
     private static final String PREFS_NAME = "favorites_prefs";
+    private static final int REQUEST_CALL_PERMISSION = 101;
+
+    private boolean isFullNameFetched = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +80,20 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        userName = getIntent().getStringExtra("username");
-        if (userName == null) userName = "Patient Name";
+        // Get username key (e.g. "Abbey") from intent extras - MUST be passed by previous activity!
+        String usernameKey = getIntent().getStringExtra("username");
+        if (usernameKey == null || usernameKey.isEmpty()) {
+            Toast.makeText(this, "Username not provided, defaulting to 'Patient'", Toast.LENGTH_SHORT).show();
+            usernameKey = "Patient";
+        }
 
-        setVariable();
+        // Disable appointment button until full name & email are fetched
+        binding.button.setEnabled(false);
+
+        // Fetch patient's full name and email asynchronously
+        fetchFullNameAndEmailFromFirebase(usernameKey);
+
+
         dateInit();
         timeInit();
 
@@ -82,19 +106,128 @@ public class DetailActivity extends AppCompatActivity {
             isFavorite = !isFavorite;
             updateFavoriteIcon();
             saveFavoriteState(isFavorite);
-
             Toast.makeText(this,
                     isFavorite ? "Added to Favorites" : "Removed from Favorites",
                     Toast.LENGTH_SHORT).show();
         });
 
         binding.button.setOnClickListener(v -> {
+            if (!isFullNameFetched) {
+                Toast.makeText(this, "Please wait, loading your profile...", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (selectedDate == null || selectedTime == null) {
                 Toast.makeText(this, "Please select date and time for the appointment.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            sendAppointmentEmail();
+            if (userEmail == null || userEmail.isEmpty()) {
+                Toast.makeText(this, "Your email is missing. Cannot proceed.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Log.d("DetailActivity", "Sending appointment request with userName: " + userName + " and userEmail: " + userEmail);
+            sendAppointmentRequest();
         });
+
+
+
+        binding.videobtn.setOnClickListener(v -> Toast.makeText(this, "Video call feature coming soon!", Toast.LENGTH_SHORT).show());
+
+        binding.chatbtn.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+
+        binding.addressTxt.setOnClickListener(v -> {
+            String location = item.getLocation();
+            if (location != null && !location.isEmpty()) {
+                String geoUri = "geo:0,0?q=" + location.replace(" ", "+");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                } else {
+                    Toast.makeText(DetailActivity.this, "No maps application found", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(DetailActivity.this, "Doctor location not available", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Fetch patient's full name and email by querying Users node where "username" equals the given username.
+     * Enable appointment button only after fetch is complete.
+     */
+    private void fetchFullNameAndEmailFromFirebase(String usernameKey) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        Query query = reference.orderByChild("username").equalTo(usernameKey);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                        String fullName = userSnapshot.child("name").getValue(String.class);
+                        String email = userSnapshot.child("email").getValue(String.class);
+                        if (fullName != null && !fullName.isEmpty()) {
+                            userName = fullName; // update full name
+                        }
+                        if (email != null && !email.isEmpty()) {
+                            userEmail = email; // update email
+                        }
+                        break;
+                    }
+                } else {
+                    Log.w("Firebase", "No user found with username: " + usernameKey);
+                }
+                isFullNameFetched = true;
+                Log.d("DetailActivity", "Fetched full name: " + userName + ", email: " + userEmail);
+
+                runOnUiThread(() -> binding.button.setEnabled(true));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to fetch user info: " + error.getMessage());
+                isFullNameFetched = true;
+                runOnUiThread(() -> binding.button.setEnabled(true));
+            }
+        });
+    }
+
+    private void showCallConfirmationDialog(String doctorName, String doctorNumber) {
+        new AlertDialog.Builder(this)
+                .setTitle("Call Doctor")
+                .setMessage("Do you want to call Dr. " + doctorName + " at " + doctorNumber + "?")
+                .setPositiveButton("Call", (dialog, which) -> makePhoneCall(doctorNumber))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void makePhoneCall(String phoneNumber) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    REQUEST_CALL_PERMISSION);
+        } else {
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:" + phoneNumber));
+            startActivity(callIntent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CALL_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Call permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void updateFavoriteIcon() {
@@ -117,18 +250,7 @@ public class DetailActivity extends AppCompatActivity {
         return prefs.getBoolean(item.getName(), false);
     }
 
-    private void setVariable() {
-        Glide.with(this)
-                .load(item.getPicture())
-                .placeholder(R.drawable.person_sharp_icon)
-                .into(binding.img);
 
-        binding.addressTxt.setText(item.getAddress());
-        binding.nameTxt.setText(item.getName());
-        binding.specialTxt.setText(item.getSpecial());
-        binding.patiensTxt.setText(String.valueOf(item.getPatiens()));
-        binding.experience.setText(item.getExpriense() + " Years");
-    }
 
     private void dateInit() {
         binding.dateView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -144,132 +266,90 @@ public class DetailActivity extends AppCompatActivity {
         timeAdapter.setOnItemClickListener(time -> selectedTime = time);
     }
 
-    private void sendAppointmentEmail() {
-        String doctorEmail = item.getEmail();
-        if (doctorEmail == null || doctorEmail.isEmpty()) {
-            Toast.makeText(this, "Doctor email not available", Toast.LENGTH_SHORT).show();
+    private void showAppointmentConfirmedNotification(String doctorName, String date, String time) {
+        String channelId = "appointment_confirmed_channel";
+        String channelName = "Appointment Confirmations";
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        String message = "Your appointment with " + doctorName + " on " + date + " at " + time + " has been requested. Please wait for confirmation.";
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.notifications_24dp_999999_fill0_wght400_grad0_opsz24)
+                .setContentTitle("Appointment Request Sent")
+                .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message)) // Makes it expandable
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        notificationManager.notify(1001, builder.build());
+    }
+
+    // Send appointment POST request to Firebase Cloud Function endpoint
+    private void sendAppointmentRequest() {
+
+        String functionUrl = "https://confirmappointment-vy6tk2hf5q-uc.a.run.app/";
+
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("userName", userName);      // Patient's full name
+            postData.put("userEmail", userEmail);    // Patient's email added here
+            postData.put("doctorName", item.getName());
+
+            postData.put("date", selectedDate);
+            postData.put("time", selectedTime);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to prepare appointment data", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String subject = "Appointment Request from " + userName;
-        String message = "Dear Dr. " + item.getName() + ",\n\n" +
-                "You have a new appointment request.\n\n" +
-                "Patient: " + userName + "\n" +
-                "Specialization: " + item.getSpecial() + "\n" +
-                "Date: " + selectedDate + "\n" +
-                "Time: " + selectedTime + "\n\n" +
-                "Please reply to confirm or reject this appointment.\n\n" +
-                "Best regards,\nYour Health App";
+        Log.d("DetailActivity", "POST data userName: " + userName);
+        Log.d("DetailActivity", "POST data userEmail: " + userEmail);
+        Log.d("DetailActivity", "POST URL: " + functionUrl);
 
-        OkHttpClient client = new OkHttpClient();
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        // Use exactly your Mailgun API key (copy-paste ONLY the key part starting with "key-")
-        String apiKey = "key-70a5e10c0152503d6a0d426b1e8d9c97";  // <-- replace with YOUR exact key
-
-        // Your Mailgun sandbox domain exactly as shown in dashboard
-        String domain = "sandbox9532cbe1f35f49f2aed68d94874fccaf.mailgun.org";
-
-        RequestBody formBody = new FormBody.Builder()
-                // Use postmaster@domain as sender email
-                .add("from", "Appointments <postmaster@" + domain + ">")
-                .add("to", doctorEmail)
-                .add("subject", subject)
-                .add("text", message)
-                .build();
-
-        Request request = new Request.Builder()
-                .url("https://api.mailgun.net/v3/" + domain + "/messages")
-                .header("Authorization", Credentials.basic("api", apiKey))
-                .post(formBody)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> Toast.makeText(DetailActivity.this, "Failed to send email: " + e.getMessage(), Toast.LENGTH_LONG).show());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseBody = response.body() != null ? response.body().string() : "No response body";
-                int statusCode = response.code();
-                runOnUiThread(() -> {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(DetailActivity.this, "Email sent successfully", Toast.LENGTH_SHORT).show();
-                        saveAppointmentToFirebase(doctorEmail, userName, selectedDate, selectedTime, item.getName(), item.getSpecial());
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, functionUrl, postData,
+                response -> {
+                    Toast.makeText(this, "Appointment request sent!", Toast.LENGTH_LONG).show();
+                    showAppointmentConfirmedNotification(item.getName(), selectedDate, selectedTime);
+                },
+                error -> {
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (networkResponse != null && networkResponse.data != null) {
+                        String data = new String(networkResponse.data);
+                        Log.e("VolleyError", "Status code: " + networkResponse.statusCode + ", Data: " + data);
                     } else {
-                        Toast.makeText(DetailActivity.this,
-                                "Email failed: " + statusCode + " " + response.message() + "\n" + responseBody,
-                                Toast.LENGTH_LONG).show();
+                        Log.e("VolleyError", "No network response");
                     }
-                });
-            }
-        });
-    }
-
-
-
-
-    private void saveAppointmentToFirebase(String doctorEmail, String patientName, String date, String time, String doctorName, String specialization) {
-        DatabaseReference appointmentsRef = FirebaseDatabase.getInstance().getReference("Appointments");
-
-        String appointmentId = appointmentsRef.push().getKey();
-
-        if (appointmentId == null) {
-            Toast.makeText(this, "Failed to generate appointment ID", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        currentAppointmentId = appointmentId;
-
-        AppointmentModel appointment = new AppointmentModel(
-                appointmentId,
-                doctorEmail,
-                patientName,
-                date,
-                time,
-                doctorName,
-                specialization,
-                "pending"
-        );
-
-        appointmentsRef.child(appointmentId).setValue(appointment)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Appointment request saved", Toast.LENGTH_SHORT).show();
-                    listenForApproval(appointmentId);
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to save appointment: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
-
-    private void listenForApproval(String appointmentId) {
-        DatabaseReference appointmentStatusRef = FirebaseDatabase.getInstance()
-                .getReference("Appointments")
-                .child(appointmentId)
-                .child("status");
-
-        appointmentStatusRef.addValueEventListener(new ValueEventListener() {
+                    error.printStackTrace();
+                    Toast.makeText(this, "Failed to send appointment request", Toast.LENGTH_LONG).show();
+                }) {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String status = snapshot.getValue(String.class);
-                if (status != null) {
-                    if (status.equals("approved")) {
-                        NotificationUtils.showNotification(DetailActivity.this, "Appointment Approved",
-                                "Your appointment with Dr. " + item.getName() + " has been approved.");
-                        Toast.makeText(DetailActivity.this, "Appointment Approved!", Toast.LENGTH_LONG).show();
-                        appointmentStatusRef.removeEventListener(this);
-                    } else if (status.equals("rejected")) {
-                        NotificationUtils.showNotification(DetailActivity.this, "Appointment Rejected",
-                                "Your appointment with Dr. " + item.getName() + " has been rejected.");
-                        Toast.makeText(DetailActivity.this, "Appointment Rejected!", Toast.LENGTH_LONG).show();
-                        appointmentStatusRef.removeEventListener(this);
-                    }
-                }
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
-        });
+        };
+
+        queue.add(jsonObjectRequest);
     }
 
     public static List<String> generateDate() {

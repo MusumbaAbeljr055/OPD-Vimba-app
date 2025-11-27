@@ -3,152 +3,61 @@ package com.example.azimbalife.Domain;
 import java.io.Serializable;
 
 public class DoctorsModel implements Serializable {
-
-    private String Address;
-    private String Biography;
-    private int Id;
-    private String Name;
-    private String Picture;
-    private String Special;
-    private int Expriense;
-    private String Cost;
-    private String Date;
-    private String Time;
-    private String Location;
-    private String Mobile;
-    private String Patiens;
-    private double Rating;
-    private String Site;
-    private String email;  // <-- new field added
+    private String name;
+    private String specialty;  // Change from "Special" to "specialty"
+    private String phone;
+    private String hospital;
+    private String availability;
+    private String location;
 
     public DoctorsModel() {
     }
 
-    public String getAddress() {
-        return Address;
-    }
-
-    public void setAddress(String address) {
-        Address = address;
-    }
-
-    public String getBiography() {
-        return Biography;
-    }
-
-    public void setBiography(String biography) {
-        Biography = biography;
-    }
-
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int id) {
-        Id = id;
-    }
-
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
-    public String getPicture() {
-        return Picture;
+    public String getSpecialty() {
+        return specialty;
     }
 
-    public void setPicture(String picture) {
-        Picture = picture;
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
 
-    public String getSpecial() {
-        return Special;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setSpecial(String special) {
-        Special = special;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public int getExpriense() {
-        return Expriense;
+    public String getHospital() {
+        return hospital;
     }
 
-    public void setExpriense(int expriense) {
-        Expriense = expriense;
+    public void setHospital(String hospital) {
+        this.hospital = hospital;
     }
 
-    public String getCost() {
-        return Cost;
+    public String getAvailability() {
+        return availability;
     }
 
-    public void setCost(String cost) {
-        Cost = cost;
-    }
-
-    public String getDate() {
-        return Date;
-    }
-
-    public void setDate(String date) {
-        Date = date;
-    }
-
-    public String getTime() {
-        return Time;
-    }
-
-    public void setTime(String time) {
-        Time = time;
+    public void setAvailability(String availability) {
+        this.availability = availability;
     }
 
     public String getLocation() {
-        return Location;
+        return location;
     }
 
     public void setLocation(String location) {
-        Location = location;
-    }
-
-    public String getMobile() {
-        return Mobile;
-    }
-
-    public void setMobile(String mobile) {
-        Mobile = mobile;
-    }
-
-    public String getPatiens() {
-        return Patiens;
-    }
-
-    public void setPatiens(String patiens) {
-        Patiens = patiens;
-    }
-
-    public double getRating() {
-        return Rating;
-    }
-
-    public void setRating(double rating) {
-        Rating = rating;
-    }
-
-    public String getSite() {
-        return Site;
-    }
-
-    public void setSite(String site) {
-        Site = site;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        this.location = location;
     }
 }

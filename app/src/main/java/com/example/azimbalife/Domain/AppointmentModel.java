@@ -10,12 +10,13 @@ public class AppointmentModel {
     private String doctorName;
     private String specialization;
     private String status; // pending, approved, rejected
+    private String reason;
 
     public AppointmentModel() {
     }
 
     public AppointmentModel(String id, String doctorEmail, String patientName, String date, String time,
-                            String doctorName, String specialization, String status) {
+                            String doctorName, String specialization, String status, String reason) {
         this.id = id;
         this.doctorEmail = doctorEmail;
         this.patientName = patientName;
@@ -24,6 +25,7 @@ public class AppointmentModel {
         this.doctorName = doctorName;
         this.specialization = specialization;
         this.status = status;
+        this.reason = reason;
     }
 
     // Getters and setters for all fields
@@ -50,4 +52,7 @@ public class AppointmentModel {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getReason() { return reason; }       // <-- Add getter
+    public void setReason(String reason) { this.reason = reason; }
 }

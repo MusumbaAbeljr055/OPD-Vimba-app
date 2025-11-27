@@ -24,7 +24,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
+            android:text="OPD"
             android:textSize="40sp"
             android:textColor="@color/white"
             android:textStyle="bold"
@@ -42,23 +42,11 @@
         android:id="@+id/developedBy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Developed by © Musumba"
+        android:text="Developed by © Group 1"
         android:gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
         android:textColor="@color/white"/>
 
-    <!-- Button just above developed by, aligned to bottom-right -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/startBtn"
-        android:layout_width="60dp"
-        android:layout_height="47dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_above="@id/developedBy"
-        android:layout_marginBottom="12dp"
-        android:background="@drawable/blue_btn_bg2"
-        android:text=""
-        android:foreground="@drawable/forward_icon"
-        android:foregroundGravity="center"/>
+
 </RelativeLayout>

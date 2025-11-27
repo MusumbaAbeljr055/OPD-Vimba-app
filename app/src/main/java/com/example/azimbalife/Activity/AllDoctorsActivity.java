@@ -26,9 +26,10 @@ import java.util.List;
 
 public class AllDoctorsActivity extends AppCompatActivity {
 
-    ActivityAllDoctorsBinding binding;
-    List<DoctorsModel> doctorsList = new ArrayList<>();
-    TopDoctorAdapter adapter;
+    private ActivityAllDoctorsBinding binding;
+    private List<DoctorsModel> doctorsList = new ArrayList<>();
+    private TopDoctorAdapter adapter;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,28 +37,34 @@ public class AllDoctorsActivity extends AppCompatActivity {
         binding = ActivityAllDoctorsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Set status bar color to match toolbar blue
+        // Get username from intent extras; default fallback
+        username = getIntent().getStringExtra("username");
+        if (username == null || username.isEmpty()) {
+            username = "defaultUser";
+        }
+
+        // Set status bar color and icon visibility for better contrast
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            window.setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.purple_700));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                window.getDecorView().setSystemUiVisibility(0);
+                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
 
-        // Toolbar setup
+        // Setup toolbar title and navigation click
         binding.topAppBar.setTitle("Available Doctors");
-        binding.topAppBar.setTitleTextColor(getResources().getColor(android.R.color.black));
+        binding.topAppBar.setTitleTextColor(getResources().getColor(android.R.color.white));
         binding.topAppBar.setNavigationOnClickListener(v -> finish());
 
-        // RecyclerView layout (vertical scroll)
+        // Setup RecyclerView with vertical LinearLayoutManager
         binding.allDoctorRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Set adapter
-        adapter = new TopDoctorAdapter(doctorsList, this);
+        // Initialize adapter and set it to RecyclerView
+        adapter = new TopDoctorAdapter(doctorsList, this, username);
         binding.allDoctorRecyclerView.setAdapter(adapter);
 
-        // Load doctor data
+        // Load doctors data from Firebase
         loadAllDoctors();
     }
 

@@ -1,5 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
++    <!-- ================= Base Theme ================= -->
     <style name="Base.Theme.AZimbalife" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
         <!-- Primary colors -->
@@ -12,27 +13,61 @@
         <item name="colorSecondaryVariant">@color/my_secondary</item>
         <item name="colorOnSecondary">@color/black</item>
 
-        <!-- Background and system bar -->
+        <!-- Backgrounds & surfaces -->
         <item name="android:windowBackground">@color/off_white</item>
+        <item name="colorSurface">@color/off_white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Error colors -->
+        <item name="colorError">@color/my_primary</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- System bars -->
         <item name="android:statusBarColor">@color/my_primary</item>
         <item name="android:windowLightStatusBar">true</item> <!-- dark icons on light status bar -->
 
     </style>
-    <!-- Corrected corner image styles -->
+
+    <!-- ================= Main App Theme ================= -->
+    <style name="Theme.AZimbalife" parent="Base.Theme.AZimbalife" />
+
+    <!-- ================= Light Theme for Settings ================= -->
+    <style name="Theme.AZimbalife.SettingsLight" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/my_primary</item>
+        <item name="colorPrimaryVariant">@color/my_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary colors -->
+        <item name="colorSecondary">@color/my_secondary</item>
+        <item name="colorSecondaryVariant">@color/my_secondary</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Backgrounds & surfaces -->
+        <item name="android:windowBackground">@color/off_white</item>
+        <item name="colorSurface">@color/off_white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Error colors -->
+        <item name="colorError">@color/my_primary</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@color/my_primary</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+    </style>
+
+    <!-- ================= Corner Image Styles ================= -->
     <style name="cornerImage">
-        <item name="cornerSize">10dp</item>
         <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
     </style>
 
     <style name="fullCornerImage">
-        <!-- Note: 50% corner size is correct syntax for MaterialShapeDrawable -->
-        <item name="cornerSize">50%</item>
         <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item> <!-- 50% makes a circle -->
     </style>
-
-    <!-- Main app theme inheriting from base -->
-    <style name="Theme.AZimbalife" parent="Base.Theme.AZimbalife" />
-
-
 
 </resources>

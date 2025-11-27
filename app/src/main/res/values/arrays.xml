@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="record_types_array">
+        <item>Select Record Type</item>
+        <item>Prescription</item>
+        <item>Diagnosis</item>
+        <item>Lab Result</item>
+        <item>Vaccination</item>
+        <item>Surgery</item>
+        <item>Consultation</item>
+    </string-array>
+
+    <string-array name="status_array">
+        <item>Select Status</item>
+        <item>Active</item>
+        <item>Completed</item>
+        <item>Ongoing</item>
+        <item>Resolved</item>
+        <item>Follow-up Required</item>
+    </string-array>
+
+    <string-array name="urgency_array">
+        <item>Select Urgency</item>
+        <item>Normal</item>
+        <item>Urgent</item>
+        <item>Emergency</item>
+        <item>Routine</item>
+    </string-array>
+</resources>

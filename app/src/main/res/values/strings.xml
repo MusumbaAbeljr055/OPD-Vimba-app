@@ -1,7 +1,32 @@
 <resources>
-    <string name="app_name">Zimbalife</string>
-    <string name="zimbalife_n_welcome_you">ZimbaLife\n Welcome You!!</string>
-    <string name="go">Go</string>
+    <!-- Existing strings -->
+    <string name="app_name">Azimbalife</string>
+    <string name="hi_user">Hi, User!</string>
     <string name="how_are_you_doing_today">How are you doing today?</string>
-    <string name="hi_user">Hi,User</string>
+    <string name="settings">Settings</string>
+    <string name="back">Back</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="change_language">Change Language</string>
+    <string name="contact_support">Contact Support</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_conditions">Terms &amp; Conditions</string>
+    <string name="app_version">Version %s</string>
+    <string name="send_email">Send Email</string>
+    <string name="choose_language">Choose Language</string>
+    <string-array name="language_names">
+        <item>English</item>
+        <item>Spanish</item>
+        <item>French</item>
+    </string-array>
+    <string-array name="language_codes">
+        <item>en</item>
+        <item>es</item>
+        <item>fr</item>
+    </string-array>
+
+    <!-- Add these new strings -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

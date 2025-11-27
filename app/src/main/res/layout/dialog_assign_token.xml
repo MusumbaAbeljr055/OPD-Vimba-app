@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Assign Doctor, Token &amp; Time"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Doctor Selection -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Doctor *"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <Spinner
+            android:id="@+id/spinnerDoctors"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/edit_text_background" />
+
+        <ProgressBar
+            android:id="@+id/progressBarDoctors"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- Retry Button for Doctors -->
+    <Button
+        android:id="@+id/btnRetryLoadDoctors"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:text="Retry Loading Doctors"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        android:background="@color/my_primary"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp" />
+
+    <!-- Token Number -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Token Number *"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etTokenNumber"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:hint="Token will be auto-generated"
+        android:inputType="textCapCharacters"
+        android:maxLines="1"
+        android:text="UG-0000"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Token Hint TextView -->
+    <TextView
+        android:id="@+id/tvTokenHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Token is automatically generated with UG- prefix"
+        android:textSize="12sp"
+        android:textColor="@color/my_primary"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Allocated Time -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Appointment Time *"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etAllocatedTime"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:hint="Select appointment time"
+        android:inputType="none"
+        android:focusable="false"
+        android:clickable="true"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click to select time from time picker"
+        android:textSize="12sp"
+        android:textColor="@color/my_primary"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="* Required fields"
+        android:textSize="12sp"
+        android:textColor="@color/my_primary"
+        android:textStyle="italic" />
+
+</LinearLayout>

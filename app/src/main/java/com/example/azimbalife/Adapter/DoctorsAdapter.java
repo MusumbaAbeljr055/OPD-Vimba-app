@@ -46,12 +46,7 @@ public class DoctorsAdapter extends RecyclerView.Adapter<DoctorsAdapter.DoctorVi
     public void onBindViewHolder(@NonNull DoctorViewHolder holder, int position) {
         DoctorsModel doctor = doctorsList.get(position);
         holder.tvName.setText(doctor.getName());
-        holder.tvSpecial.setText(doctor.getSpecial());
 
-        Glide.with(holder.imageDoctor.getContext())
-                .load(doctor.getPicture())
-                .placeholder(R.drawable.person_sharp_icon)
-                .into(holder.imageDoctor);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onItemClick(doctor);
@@ -71,10 +66,7 @@ public class DoctorsAdapter extends RecyclerView.Adapter<DoctorsAdapter.DoctorVi
             doctorsList.addAll(doctorsListFull);
         } else {
             for (DoctorsModel doctor : doctorsListFull) {
-                if (doctor.getName().toLowerCase().contains(text) ||
-                        doctor.getSpecial().toLowerCase().contains(text)) {
-                    doctorsList.add(doctor);
-                }
+
             }
         }
         notifyDataSetChanged();

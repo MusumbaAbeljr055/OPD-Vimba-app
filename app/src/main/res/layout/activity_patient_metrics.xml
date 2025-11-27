@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <!-- Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient Vital Signs"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/my_primary" />
+
+            <Button
+                android:id="@+id/btnRefresh"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Refresh"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/my_primary"
+                android:drawableStart="@android:drawable/ic_popup_sync"
+                android:drawableTint="@color/white"
+                android:drawablePadding="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+        </LinearLayout>
+
+        <!-- Patient Count Info -->
+        <TextView
+            android:id="@+id/tvPatientCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loading patients..."
+            android:textSize="12sp"
+            android:textColor="@color/grey"
+            android:padding="8dp"
+            android:background="@color/light_gray"
+            android:layout_marginBottom="16dp"
+            android:gravity="center" />
+
+        <!-- Patient Selection Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Patient Selection"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_primary"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select from scheduled patients dropdown"
+                    android:textSize="12sp"
+                    android:textColor="@color/grey"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Selected Patient Info Display -->
+                <TextView
+                    android:id="@+id/tvSelectedPatientInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No patient selected"
+                    android:textSize="14sp"
+                    android:textColor="@color/my_primary"
+                    android:background="@color/light_gray"
+                    android:padding="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/spinnerPatients"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingStart="16dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Vital Signs Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vital Signs"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_primary"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Row 1: Temperature & Blood Pressure -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginBottom="12dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Temperature (°C)"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etTemperature"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:hint="37.0"
+                            android:inputType="numberDecimal"
+                            android:textSize="14sp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="16dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Blood Pressure"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etBloodPressure"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:hint="120/80"
+                            android:inputType="text"
+                            android:textSize="14sp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="16dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Row 2: Heart Rate & Respiratory Rate -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginBottom="12dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Heart Rate (bpm)"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etHeartRate"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:hint="72"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="16dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Respiratory Rate"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etRespiratoryRate"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:hint="16"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="16dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Oxygen Saturation -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Oxygen Saturation (%)"
+                        android:textSize="12sp"
+                        android:textColor="@color/grey"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etOxygenSaturation"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="98"
+                        android:inputType="number"
+                        android:textSize="14sp"
+                        android:background="@drawable/edit_text_background"
+                        android:paddingStart="16dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Measurements Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Measurements"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_primary"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Height & Weight -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginBottom="12dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Height (cm)"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etHeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:hint="170"
+                            android:inputType="numberDecimal"
+                            android:textSize="14sp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="16dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Weight (kg)"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etWeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:hint="68"
+                            android:inputType="numberDecimal"
+                            android:textSize="14sp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="16dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Blood Sugar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Blood Sugar (mg/dL)"
+                        android:textSize="12sp"
+                        android:textColor="@color/grey"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etBloodSugar"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="95"
+                        android:inputType="numberDecimal"
+                        android:textSize="14sp"
+                        android:background="@drawable/edit_text_background"
+                        android:paddingStart="16dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Clinical Notes Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Clinical Notes"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_primary"
+                    android:layout_marginBottom="12dp" />
+
+                <EditText
+                    android:id="@+id/etNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:hint="Enter clinical observations, findings, and recommendations..."
+                    android:inputType="textMultiLine"
+                    android:gravity="top"
+                    android:textSize="14sp"
+                    android:background="@drawable/edit_text_background"
+                    android:padding="16dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="2"
+                android:text="Submit Metrics"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/button_background"
+                android:layout_marginEnd="8dp"
+                android:drawableStart="@android:drawable/ic_menu_save"
+                android:drawableTint="@color/white"
+                android:drawablePadding="8dp" />
+
+            <Button
+                android:id="@+id/btnClear"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:text="Clear"
+                android:textSize="14sp"
+                android:textColor="@color/my_primary"
+                android:background="@drawable/outline_button_background"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnViewHistory"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:text="History"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_background_secondary"
+                android:drawableStart="@android:drawable/ic_menu_recent_history"
+                android:drawableTint="@color/white"
+                android:drawablePadding="4dp" />
+
+        </LinearLayout>
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

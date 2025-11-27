@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardMetric"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvDateTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Date &amp; Time"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/my_primary" />
+
+            <TextView
+                android:id="@+id/tvHealthWorker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="By: Staff"
+                android:textSize="12sp"
+                android:textColor="@color/my_primary" />
+
+        </LinearLayout>
+
+        <!-- Vital Signs -->
+        <TextView
+            android:id="@+id/tvVitals"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vital signs"
+            android:textSize="14sp"
+            android:textColor="@color/my_primary"
+            android:layout_marginTop="8dp" />
+
+        <!-- Measurements -->
+        <TextView
+            android:id="@+id/tvMeasurements"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Measurements"
+            android:textSize="14sp"
+            android:textColor="@color/my_primary"
+            android:layout_marginTop="4dp" />
+
+        <!-- Notes -->
+        <TextView
+            android:id="@+id/tvNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clinical notes"
+            android:textSize="13sp"
+            android:textColor="@color/my_primary"
+            android:textStyle="italic"
+            android:layout_marginTop="8dp"
+            android:background="@color/my_primary"
+            android:padding="8dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
