@@ -119,25 +119,12 @@
         <activity
             android:name=".Activity.SettingsActivity"
             android:exported="false" />
-        <activity
-            android:name=".Activity.AllDoctorsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.DetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.ChatActivity"
-            android:exported="false" />
-
         <!-- Legacy Activities (You can remove these if not used) -->
         <activity
             android:name=".Activity.MyTokensActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.TokenTrackingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.SpecialistActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.ScheduleActivity"
